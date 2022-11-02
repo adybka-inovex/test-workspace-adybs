@@ -2,7 +2,7 @@
 	"name": "CLEANUP",
 	"properties": {
 		"content": {
-			"query": "DROP EXTERNAL DATA SOURCE TestStorage\nDROP DATABASE SCOPED CREDENTIAL hopacredential\n\n/*comment in sql script*/",
+			"query": "DROP EXTERNAL DATA SOURCE TestStorage\nDROP DATABASE SCOPED CREDENTIAL hopacredential\n\n",
 			"metadata": {
 				"language": "sql"
 			},
