@@ -1,0 +1,2523 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"workspaceName": {
+			"type": "string",
+			"metadata": "Workspace name",
+			"defaultValue": "test-workspace-adybs"
+		},
+		"SQLPortVessels_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'SQLPortVessels'"
+		},
+		"SQLPortVessels_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'SQLPortVessels'"
+		},
+		"StorageAccount_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'StorageAccount'"
+		},
+		"test-workspace-adybs-WorkspaceDefaultSqlServer_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'test-workspace-adybs-WorkspaceDefaultSqlServer'"
+		},
+		"testTableStorgeLS_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'testTableStorgeLS'"
+		},
+		"SQLPortVessels_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "INOVEX-HQ\\Andrew.Dybka"
+		},
+		"test-workspace-adybs-WorkspaceDefaultStorage_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://datacourseworkspace.dfs.core.windows.net"
+		}
+	},
+	"variables": {
+		"workspaceId": "[concat('Microsoft.Synapse/workspaces/', parameters('workspaceName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('workspaceName'), '/CopyToParquet')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy data1",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "SqlServerSource",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "ParquetSink",
+								"storeSettings": {
+									"type": "AzureBlobStorageWriteSettings"
+								},
+								"formatSettings": {
+									"type": "ParquetWriteSettings"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "Schedule No.",
+											"type": "String",
+											"physicalType": "varchar"
+										},
+										"sink": {
+											"name": "ScheduleNo",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "Vessel Name",
+											"type": "String",
+											"physicalType": "varchar"
+										},
+										"sink": {
+											"name": "VesselName",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "Flag",
+											"type": "String",
+											"physicalType": "varchar"
+										},
+										"sink": {
+											"name": "Flag",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "GRT",
+											"type": "Single",
+											"physicalType": "real"
+										},
+										"sink": {
+											"name": "GRT",
+											"type": "Single",
+											"physicalType": "FLOAT"
+										}
+									},
+									{
+										"source": {
+											"name": "Last Country",
+											"type": "String",
+											"physicalType": "varchar"
+										},
+										"sink": {
+											"name": "LastCountry",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "Last Port",
+											"type": "String",
+											"physicalType": "varchar"
+										},
+										"sink": {
+											"name": "LastPort",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "Next Country",
+											"type": "String",
+											"physicalType": "varchar"
+										},
+										"sink": {
+											"name": "NextCountry",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "Next Port",
+											"type": "String",
+											"physicalType": "varchar"
+										},
+										"sink": {
+											"name": "NextPort",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "Berth",
+											"type": "String",
+											"physicalType": "varchar"
+										},
+										"sink": {
+											"name": "Berth",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "Import/Export",
+											"type": "String",
+											"physicalType": "varchar"
+										},
+										"sink": {
+											"name": "ImportExport",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "Arrival Date",
+											"type": "DateTime",
+											"physicalType": "datetime"
+										},
+										"sink": {
+											"name": "ArrivalDate",
+											"physicalType": "INT_96"
+										}
+									},
+									{
+										"source": {
+											"name": "Depature Date",
+											"type": "DateTime",
+											"physicalType": "datetime"
+										},
+										"sink": {
+											"name": "DepatureDate",
+											"physicalType": "INT_96"
+										}
+									},
+									{
+										"source": {
+											"name": "Harbour Dues Rate",
+											"type": "Single",
+											"physicalType": "real"
+										},
+										"sink": {
+											"name": "HarbourDuesRate",
+											"physicalType": "FLOAT"
+										}
+									},
+									{
+										"source": {
+											"name": "Harbour Dues Billed",
+											"type": "Single",
+											"physicalType": "real"
+										},
+										"sink": {
+											"name": "HarbourDuesBilled",
+											"physicalType": "FLOAT"
+										}
+									},
+									{
+										"source": {
+											"name": "Harbour Dues Posted",
+											"type": "Boolean",
+											"physicalType": "bit"
+										},
+										"sink": {
+											"name": "HarbourDuesPosted",
+											"physicalType": "BOOLEAN"
+										}
+									},
+									{
+										"source": {
+											"name": "Harbour Dues Customer",
+											"type": "String",
+											"physicalType": "varchar"
+										},
+										"sink": {
+											"name": "HarbourDuesCustomer",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "Is Berthage Billable",
+											"type": "Boolean",
+											"physicalType": "bit"
+										},
+										"sink": {
+											"name": "IsBerthageBillable",
+											"physicalType": "BOOLEAN"
+										}
+									},
+									{
+										"source": {
+											"name": "Berthage Posted",
+											"type": "Boolean",
+											"physicalType": "bit"
+										},
+										"sink": {
+											"name": "BerthagePosted",
+											"physicalType": "BOOLEAN"
+										}
+									},
+									{
+										"source": {
+											"name": "Berthage Customer",
+											"type": "String",
+											"physicalType": "varchar"
+										},
+										"sink": {
+											"name": "BerthageCustomer",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "Berthing Type",
+											"type": "String",
+											"physicalType": "nvarchar"
+										},
+										"sink": {
+											"name": "BerthingType",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "Berthage Fee",
+											"type": "Single",
+											"physicalType": "real"
+										},
+										"sink": {
+											"name": "BerthageFee",
+											"physicalType": "FLOAT"
+										}
+									},
+									{
+										"source": {
+											"name": "CargoLineNo",
+											"type": "Int32",
+											"physicalType": "int"
+										},
+										"sink": {
+											"name": "CargoLineNo",
+											"type": "Int32",
+											"physicalType": "INT_32"
+										}
+									},
+									{
+										"source": {
+											"name": "BOL No.",
+											"type": "String",
+											"physicalType": "varchar"
+										},
+										"sink": {
+											"name": "BOLNo",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "Cargo Name",
+											"type": "String",
+											"physicalType": "varchar"
+										},
+										"sink": {
+											"name": "CargoName",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "Cargo Group",
+											"type": "String",
+											"physicalType": "varchar"
+										},
+										"sink": {
+											"name": "CargoGroup",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "Government Class",
+											"type": "String",
+											"physicalType": "varchar"
+										},
+										"sink": {
+											"name": "GovernmentClass",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "Quantity",
+											"type": "Decimal",
+											"physicalType": "decimal",
+											"scale": 12,
+											"precision": 25
+										},
+										"sink": {
+											"name": "Quantity",
+											"type": "Decimal",
+											"physicalType": "DECIMAL"
+										}
+									},
+									{
+										"source": {
+											"name": "Quantity Units",
+											"type": "String",
+											"physicalType": "varchar"
+										},
+										"sink": {
+											"name": "QuantityUnits",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "Is Wharfage Billable",
+											"type": "Boolean",
+											"physicalType": "bit"
+										},
+										"sink": {
+											"name": "IsWharfageBillable",
+											"physicalType": "BOOLEAN"
+										}
+									},
+									{
+										"source": {
+											"name": "Bill Wharfage To",
+											"type": "String",
+											"physicalType": "varchar"
+										},
+										"sink": {
+											"name": "BillWharfageTo",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "Whaftage Customer No.",
+											"type": "String",
+											"physicalType": "varchar"
+										},
+										"sink": {
+											"name": "WhaftageCustomerNo",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "Wharfage Rate",
+											"type": "Double",
+											"physicalType": "float"
+										},
+										"sink": {
+											"name": "WharfageRate",
+											"physicalType": "DOUBLE"
+										}
+									},
+									{
+										"source": {
+											"name": "Wharfage Total",
+											"type": "Decimal",
+											"physicalType": "decimal",
+											"scale": 12,
+											"precision": 25
+										},
+										"sink": {
+											"name": "WharfageTotal",
+											"physicalType": "DECIMAL"
+										}
+									},
+									{
+										"source": {
+											"name": "Is Throughput Billable",
+											"type": "Boolean",
+											"physicalType": "bit"
+										},
+										"sink": {
+											"name": "IsThroughputBillable",
+											"physicalType": "BOOLEAN"
+										}
+									},
+									{
+										"source": {
+											"name": "Bill Throughput To",
+											"type": "String",
+											"physicalType": "varchar"
+										},
+										"sink": {
+											"name": "BillThroughputTo",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "Throughput Cust No.",
+											"type": "String",
+											"physicalType": "varchar"
+										},
+										"sink": {
+											"name": "ThroughputCustNo",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "Throughput Rate",
+											"type": "Double",
+											"physicalType": "float"
+										},
+										"sink": {
+											"name": "ThroughputRate",
+											"physicalType": "DOUBLE"
+										}
+									},
+									{
+										"source": {
+											"name": "Throughput Total",
+											"type": "Decimal",
+											"physicalType": "decimal",
+											"scale": 12,
+											"precision": 25
+										},
+										"sink": {
+											"name": "ThroughputTotal",
+											"physicalType": "DECIMAL"
+										}
+									},
+									{
+										"source": {
+											"name": "Wharfage/Throughput Posted",
+											"type": "Boolean",
+											"physicalType": "bit"
+										},
+										"sink": {
+											"name": "WharfageThroughputPosted",
+											"physicalType": "BOOLEAN"
+										}
+									},
+									{
+										"source": {
+											"name": "Cargo Bill By",
+											"type": "String",
+											"physicalType": "varchar"
+										},
+										"sink": {
+											"name": "CargoBillBy",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "Cargo Origin",
+											"type": "String",
+											"physicalType": "varchar"
+										},
+										"sink": {
+											"name": "CargoOrigin",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "Cargo Direction",
+											"type": "String",
+											"physicalType": "varchar"
+										},
+										"sink": {
+											"name": "CargoDirection",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "Throughput Tax",
+											"type": "Double",
+											"physicalType": "float"
+										},
+										"sink": {
+											"name": "ThroughputTax",
+											"physicalType": "DOUBLE"
+										}
+									},
+									{
+										"source": {
+											"name": "Wharfage Tax",
+											"type": "Double",
+											"physicalType": "float"
+										},
+										"sink": {
+											"name": "WharfageTax",
+											"physicalType": "DOUBLE"
+										}
+									},
+									{
+										"source": {
+											"name": "Cargo Memo",
+											"type": "String",
+											"physicalType": "varchar"
+										},
+										"sink": {
+											"name": "CargoMemo",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "Cargo Is Estimated",
+											"type": "Boolean",
+											"physicalType": "bit"
+										},
+										"sink": {
+											"name": "CargoIsEstimated",
+											"physicalType": "BOOLEAN"
+										}
+									},
+									{
+										"source": {
+											"name": "Cargo Posted",
+											"type": "Boolean",
+											"physicalType": "bit"
+										},
+										"sink": {
+											"name": "CargoPosted",
+											"physicalType": "BOOLEAN"
+										}
+									},
+									{
+										"source": {
+											"name": "Calculated Tonnage",
+											"type": "Decimal",
+											"physicalType": "decimal",
+											"scale": 12,
+											"precision": 25
+										},
+										"sink": {
+											"name": "CalculatedTonnage",
+											"physicalType": "DECIMAL"
+										}
+									},
+									{
+										"source": {
+											"name": "Terminal Operator",
+											"type": "String",
+											"physicalType": "varchar"
+										},
+										"sink": {
+											"name": "TerminalOperator",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "Berthage Tax",
+											"type": "Single",
+											"physicalType": "real"
+										},
+										"sink": {
+											"name": "BerthageTax",
+											"physicalType": "FLOAT"
+										}
+									},
+									{
+										"source": {
+											"name": "Harbour Dues Tax",
+											"type": "Single",
+											"physicalType": "real"
+										},
+										"sink": {
+											"name": "HarbourDuesTax",
+											"physicalType": "FLOAT"
+										}
+									},
+									{
+										"source": {
+											"name": "Shipper Name",
+											"type": "String",
+											"physicalType": "varchar"
+										},
+										"sink": {
+											"name": "ShipperName",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "Shipper City",
+											"type": "String",
+											"physicalType": "varchar"
+										},
+										"sink": {
+											"name": "ShipperCity",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "Shipper Country",
+											"type": "String",
+											"physicalType": "varchar"
+										},
+										"sink": {
+											"name": "ShipperCountry",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "Consignee Name",
+											"type": "String",
+											"physicalType": "varchar"
+										},
+										"sink": {
+											"name": "ConsigneeName",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "Consignee City",
+											"type": "String",
+											"physicalType": "varchar"
+										},
+										"sink": {
+											"name": "ConsigneeCity",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "Consignee Country",
+											"type": "String",
+											"physicalType": "varchar"
+										},
+										"sink": {
+											"name": "ConsigneeCountry",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "Shipping Service Name",
+											"type": "String",
+											"physicalType": "varchar"
+										},
+										"sink": {
+											"name": "ShippingServiceName",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "Measure",
+											"type": "Double",
+											"physicalType": "float"
+										},
+										"sink": {
+											"name": "Measure",
+											"type": "Double",
+											"physicalType": "DOUBLE"
+										}
+									},
+									{
+										"source": {
+											"name": "Measure Units",
+											"type": "String",
+											"physicalType": "varchar"
+										},
+										"sink": {
+											"name": "MeasureUnits",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "Throughput Discount",
+											"type": "Double",
+											"physicalType": "float"
+										},
+										"sink": {
+											"name": "ThroughputDiscount",
+											"physicalType": "DOUBLE"
+										}
+									},
+									{
+										"source": {
+											"name": "Wharfage Discount",
+											"type": "Double",
+											"physicalType": "float"
+										},
+										"sink": {
+											"name": "WharfageDiscount",
+											"physicalType": "DOUBLE"
+										}
+									},
+									{
+										"source": {
+											"name": "Harbour Dues Discount",
+											"type": "Int32",
+											"physicalType": "int"
+										},
+										"sink": {
+											"name": "HarbourDuesDiscount",
+											"physicalType": "INT_32"
+										}
+									},
+									{
+										"source": {
+											"name": "Berthage Discount",
+											"type": "Int32",
+											"physicalType": "int"
+										},
+										"sink": {
+											"name": "BerthageDiscount",
+											"physicalType": "INT_32"
+										}
+									},
+									{
+										"source": {
+											"name": "Sched Cargo Direction",
+											"type": "String",
+											"physicalType": "varchar"
+										},
+										"sink": {
+											"name": "SchedCargoDirection",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "Berthing Cargo",
+											"type": "String",
+											"physicalType": "varchar"
+										},
+										"sink": {
+											"name": "BerthingCargo",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "Billable Pier",
+											"type": "Boolean",
+											"physicalType": "bit"
+										},
+										"sink": {
+											"name": "BillablePier",
+											"physicalType": "BOOLEAN"
+										}
+									},
+									{
+										"source": {
+											"name": "Vessel Type",
+											"type": "String",
+											"physicalType": "varchar"
+										},
+										"sink": {
+											"name": "VesselType",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "Vessel Length",
+											"type": "Single",
+											"physicalType": "real"
+										},
+										"sink": {
+											"name": "VesselLength",
+											"physicalType": "FLOAT"
+										}
+									},
+									{
+										"source": {
+											"name": "Cargo Origin Port Country",
+											"type": "String",
+											"physicalType": "varchar"
+										},
+										"sink": {
+											"name": "CargoOriginPortCountry",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "Cargo Origin Port City",
+											"type": "String",
+											"physicalType": "varchar"
+										},
+										"sink": {
+											"name": "CargoOriginPortCity",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "Cargo Destination Port Country",
+											"type": "String",
+											"physicalType": "varchar"
+										},
+										"sink": {
+											"name": "CargoDestinationPortCountry",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "Cargo Destination Port City",
+											"type": "String",
+											"physicalType": "varchar"
+										},
+										"sink": {
+											"name": "CargoDestinationPortCity",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "Vessel Shipping Line",
+											"type": "String",
+											"physicalType": "varchar"
+										},
+										"sink": {
+											"name": "VesselShippingLine",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "Home Based Vessel",
+											"type": "Boolean",
+											"physicalType": "bit"
+										},
+										"sink": {
+											"name": "HomeBasedVessel",
+											"physicalType": "BOOLEAN"
+										}
+									},
+									{
+										"source": {
+											"name": "IMO Number",
+											"type": "Int32",
+											"physicalType": "int"
+										},
+										"sink": {
+											"name": "IMONumber",
+											"physicalType": "INT_32"
+										}
+									},
+									{
+										"source": {
+											"name": "Berth Dept",
+											"type": "String",
+											"physicalType": "varchar"
+										},
+										"sink": {
+											"name": "BerthDept",
+											"physicalType": "UTF8"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "VesselsSpreed",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "Parquet1",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2022-09-08T18:15:22Z"
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/VesselsSpreed')]",
+				"[concat(variables('workspaceId'), '/datasets/Parquet1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/CopyToTable')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy data1",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "ParquetSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								}
+							},
+							"sink": {
+								"type": "AzureTableSink",
+								"azureTableInsertType": "replace",
+								"writeBatchSize": 10000
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "Schedule No.",
+											"physicalType": "varchar"
+										},
+										"sink": {
+											"name": "ScheduleNo"
+										}
+									},
+									{
+										"source": {
+											"name": "GRT",
+											"physicalType": "real",
+											"precision": 7
+										},
+										"sink": {
+											"name": "GRT"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "Parquet1",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "AzureTable1",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2022-09-12T14:28:45Z"
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/Parquet1')]",
+				"[concat(variables('workspaceId'), '/datasets/AzureTable1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Pipeline 1')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "Lookup1",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureTableSource",
+								"azureTableSourceIgnoreTableNotFound": false
+							},
+							"dataset": {
+								"referenceName": "AzureTable1",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2022-09-12T17:00:02Z"
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/AzureTable1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/AzureTable1')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "testTableStorgeLS",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureTable",
+				"schema": [],
+				"typeProperties": {
+					"tableName": "testTable"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/testTableStorgeLS')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/DelimitedText1')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "test-workspace-adybs-WorkspaceDefaultStorage",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "testquery",
+						"folderPath": "testquery",
+						"fileSystem": "datacoursefilesys"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/test-workspace-adybs-WorkspaceDefaultStorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Parquet1')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "StorageAccount",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "testfile.parquet",
+						"container": "datacoursefilesys"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/StorageAccount')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/PortToCSV_Sink')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "StorageAccount",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": "datacoursefilesys"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/StorageAccount')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/VesselSpreadsheet')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "SQLPortVessels",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "SqlServerTable",
+				"schema": [
+					{
+						"name": "Schedule No.",
+						"type": "varchar"
+					},
+					{
+						"name": "Vessel Name",
+						"type": "varchar"
+					},
+					{
+						"name": "Flag",
+						"type": "varchar"
+					},
+					{
+						"name": "GRT",
+						"type": "real",
+						"precision": 7
+					},
+					{
+						"name": "Last Country",
+						"type": "varchar"
+					},
+					{
+						"name": "Last Port",
+						"type": "varchar"
+					},
+					{
+						"name": "Next Country",
+						"type": "varchar"
+					},
+					{
+						"name": "Next Port",
+						"type": "varchar"
+					},
+					{
+						"name": "Berth",
+						"type": "varchar"
+					},
+					{
+						"name": "Import/Export",
+						"type": "varchar"
+					},
+					{
+						"name": "Arrival Date",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "Depature Date",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "Harbour Dues Rate",
+						"type": "real",
+						"precision": 7
+					},
+					{
+						"name": "Harbour Dues Billed",
+						"type": "real",
+						"precision": 7
+					},
+					{
+						"name": "Harbour Dues Posted",
+						"type": "bit"
+					},
+					{
+						"name": "Harbour Dues Customer",
+						"type": "varchar"
+					},
+					{
+						"name": "Is Berthage Billable",
+						"type": "bit"
+					},
+					{
+						"name": "Berthage Posted",
+						"type": "bit"
+					},
+					{
+						"name": "Berthage Customer",
+						"type": "varchar"
+					},
+					{
+						"name": "Berthing Type",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Berthage Fee",
+						"type": "real",
+						"precision": 7
+					},
+					{
+						"name": "CargoLineNo",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "BOL No.",
+						"type": "varchar"
+					},
+					{
+						"name": "Cargo Name",
+						"type": "varchar"
+					},
+					{
+						"name": "Cargo Group",
+						"type": "varchar"
+					},
+					{
+						"name": "Government Class",
+						"type": "varchar"
+					},
+					{
+						"name": "Quantity",
+						"type": "decimal",
+						"precision": 25,
+						"scale": 12
+					},
+					{
+						"name": "Quantity Units",
+						"type": "varchar"
+					},
+					{
+						"name": "Is Wharfage Billable",
+						"type": "bit"
+					},
+					{
+						"name": "Bill Wharfage To",
+						"type": "varchar"
+					},
+					{
+						"name": "Whaftage Customer No.",
+						"type": "varchar"
+					},
+					{
+						"name": "Wharfage Rate",
+						"type": "float",
+						"precision": 15
+					},
+					{
+						"name": "Wharfage Total",
+						"type": "decimal",
+						"precision": 25,
+						"scale": 12
+					},
+					{
+						"name": "Is Throughput Billable",
+						"type": "bit"
+					},
+					{
+						"name": "Bill Throughput To",
+						"type": "varchar"
+					},
+					{
+						"name": "Throughput Cust No.",
+						"type": "varchar"
+					},
+					{
+						"name": "Throughput Rate",
+						"type": "float",
+						"precision": 15
+					},
+					{
+						"name": "Throughput Total",
+						"type": "decimal",
+						"precision": 25,
+						"scale": 12
+					},
+					{
+						"name": "Wharfage/Throughput Posted",
+						"type": "bit"
+					},
+					{
+						"name": "Cargo Bill By",
+						"type": "varchar"
+					},
+					{
+						"name": "Cargo Origin",
+						"type": "varchar"
+					},
+					{
+						"name": "Cargo Direction",
+						"type": "varchar"
+					},
+					{
+						"name": "Throughput Tax",
+						"type": "float",
+						"precision": 15
+					},
+					{
+						"name": "Wharfage Tax",
+						"type": "float",
+						"precision": 15
+					},
+					{
+						"name": "Cargo Memo",
+						"type": "varchar"
+					},
+					{
+						"name": "Cargo Is Estimated",
+						"type": "bit"
+					},
+					{
+						"name": "Cargo Posted",
+						"type": "bit"
+					},
+					{
+						"name": "Calculated Tonnage",
+						"type": "decimal",
+						"precision": 25,
+						"scale": 12
+					},
+					{
+						"name": "Terminal Operator",
+						"type": "varchar"
+					},
+					{
+						"name": "Berthage Tax",
+						"type": "real",
+						"precision": 7
+					},
+					{
+						"name": "Harbour Dues Tax",
+						"type": "real",
+						"precision": 7
+					},
+					{
+						"name": "Shipper Name",
+						"type": "varchar"
+					},
+					{
+						"name": "Shipper City",
+						"type": "varchar"
+					},
+					{
+						"name": "Shipper Country",
+						"type": "varchar"
+					},
+					{
+						"name": "Consignee Name",
+						"type": "varchar"
+					},
+					{
+						"name": "Consignee City",
+						"type": "varchar"
+					},
+					{
+						"name": "Consignee Country",
+						"type": "varchar"
+					},
+					{
+						"name": "Shipping Service Name",
+						"type": "varchar"
+					},
+					{
+						"name": "Measure",
+						"type": "float",
+						"precision": 15
+					},
+					{
+						"name": "Measure Units",
+						"type": "varchar"
+					},
+					{
+						"name": "Throughput Discount",
+						"type": "float",
+						"precision": 15
+					},
+					{
+						"name": "Wharfage Discount",
+						"type": "float",
+						"precision": 15
+					},
+					{
+						"name": "Harbour Dues Discount",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Berthage Discount",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Sched Cargo Direction",
+						"type": "varchar"
+					},
+					{
+						"name": "Berthing Cargo",
+						"type": "varchar"
+					},
+					{
+						"name": "Billable Pier",
+						"type": "bit"
+					},
+					{
+						"name": "Vessel Type",
+						"type": "varchar"
+					},
+					{
+						"name": "Vessel Length",
+						"type": "real",
+						"precision": 7
+					},
+					{
+						"name": "Cargo Origin Port Country",
+						"type": "varchar"
+					},
+					{
+						"name": "Cargo Origin Port City",
+						"type": "varchar"
+					},
+					{
+						"name": "Cargo Destination Port Country",
+						"type": "varchar"
+					},
+					{
+						"name": "Cargo Destination Port City",
+						"type": "varchar"
+					},
+					{
+						"name": "Vessel Shipping Line",
+						"type": "varchar"
+					},
+					{
+						"name": "Home Based Vessel",
+						"type": "bit"
+					},
+					{
+						"name": "IMO Number",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Berth Dept",
+						"type": "varchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "VesselSpreadsheet"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/SQLPortVessels')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/VesselsSpreed')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "SQLPortVessels",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "SqlServerTable",
+				"schema": [
+					{
+						"name": "Schedule No.",
+						"type": "varchar"
+					},
+					{
+						"name": "Vessel Name",
+						"type": "varchar"
+					},
+					{
+						"name": "Flag",
+						"type": "varchar"
+					},
+					{
+						"name": "GRT",
+						"type": "real",
+						"precision": 7
+					},
+					{
+						"name": "Last Country",
+						"type": "varchar"
+					},
+					{
+						"name": "Last Port",
+						"type": "varchar"
+					},
+					{
+						"name": "Next Country",
+						"type": "varchar"
+					},
+					{
+						"name": "Next Port",
+						"type": "varchar"
+					},
+					{
+						"name": "Berth",
+						"type": "varchar"
+					},
+					{
+						"name": "Import/Export",
+						"type": "varchar"
+					},
+					{
+						"name": "Arrival Date",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "Depature Date",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "Harbour Dues Rate",
+						"type": "real",
+						"precision": 7
+					},
+					{
+						"name": "Harbour Dues Billed",
+						"type": "real",
+						"precision": 7
+					},
+					{
+						"name": "Harbour Dues Posted",
+						"type": "bit"
+					},
+					{
+						"name": "Harbour Dues Customer",
+						"type": "varchar"
+					},
+					{
+						"name": "Is Berthage Billable",
+						"type": "bit"
+					},
+					{
+						"name": "Berthage Posted",
+						"type": "bit"
+					},
+					{
+						"name": "Berthage Customer",
+						"type": "varchar"
+					},
+					{
+						"name": "Berthing Type",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Berthage Fee",
+						"type": "real",
+						"precision": 7
+					},
+					{
+						"name": "CargoLineNo",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "BOL No.",
+						"type": "varchar"
+					},
+					{
+						"name": "Cargo Name",
+						"type": "varchar"
+					},
+					{
+						"name": "Cargo Group",
+						"type": "varchar"
+					},
+					{
+						"name": "Government Class",
+						"type": "varchar"
+					},
+					{
+						"name": "Quantity",
+						"type": "decimal",
+						"precision": 25,
+						"scale": 12
+					},
+					{
+						"name": "Quantity Units",
+						"type": "varchar"
+					},
+					{
+						"name": "Is Wharfage Billable",
+						"type": "bit"
+					},
+					{
+						"name": "Bill Wharfage To",
+						"type": "varchar"
+					},
+					{
+						"name": "Whaftage Customer No.",
+						"type": "varchar"
+					},
+					{
+						"name": "Wharfage Rate",
+						"type": "float",
+						"precision": 15
+					},
+					{
+						"name": "Wharfage Total",
+						"type": "decimal",
+						"precision": 25,
+						"scale": 12
+					},
+					{
+						"name": "Is Throughput Billable",
+						"type": "bit"
+					},
+					{
+						"name": "Bill Throughput To",
+						"type": "varchar"
+					},
+					{
+						"name": "Throughput Cust No.",
+						"type": "varchar"
+					},
+					{
+						"name": "Throughput Rate",
+						"type": "float",
+						"precision": 15
+					},
+					{
+						"name": "Throughput Total",
+						"type": "decimal",
+						"precision": 25,
+						"scale": 12
+					},
+					{
+						"name": "Wharfage/Throughput Posted",
+						"type": "bit"
+					},
+					{
+						"name": "Cargo Bill By",
+						"type": "varchar"
+					},
+					{
+						"name": "Cargo Origin",
+						"type": "varchar"
+					},
+					{
+						"name": "Cargo Direction",
+						"type": "varchar"
+					},
+					{
+						"name": "Throughput Tax",
+						"type": "float",
+						"precision": 15
+					},
+					{
+						"name": "Wharfage Tax",
+						"type": "float",
+						"precision": 15
+					},
+					{
+						"name": "Cargo Memo",
+						"type": "varchar"
+					},
+					{
+						"name": "Cargo Is Estimated",
+						"type": "bit"
+					},
+					{
+						"name": "Cargo Posted",
+						"type": "bit"
+					},
+					{
+						"name": "Calculated Tonnage",
+						"type": "decimal",
+						"precision": 25,
+						"scale": 12
+					},
+					{
+						"name": "Terminal Operator",
+						"type": "varchar"
+					},
+					{
+						"name": "Berthage Tax",
+						"type": "real",
+						"precision": 7
+					},
+					{
+						"name": "Harbour Dues Tax",
+						"type": "real",
+						"precision": 7
+					},
+					{
+						"name": "Shipper Name",
+						"type": "varchar"
+					},
+					{
+						"name": "Shipper City",
+						"type": "varchar"
+					},
+					{
+						"name": "Shipper Country",
+						"type": "varchar"
+					},
+					{
+						"name": "Consignee Name",
+						"type": "varchar"
+					},
+					{
+						"name": "Consignee City",
+						"type": "varchar"
+					},
+					{
+						"name": "Consignee Country",
+						"type": "varchar"
+					},
+					{
+						"name": "Shipping Service Name",
+						"type": "varchar"
+					},
+					{
+						"name": "Measure",
+						"type": "float",
+						"precision": 15
+					},
+					{
+						"name": "Measure Units",
+						"type": "varchar"
+					},
+					{
+						"name": "Throughput Discount",
+						"type": "float",
+						"precision": 15
+					},
+					{
+						"name": "Wharfage Discount",
+						"type": "float",
+						"precision": 15
+					},
+					{
+						"name": "Harbour Dues Discount",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Berthage Discount",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Sched Cargo Direction",
+						"type": "varchar"
+					},
+					{
+						"name": "Berthing Cargo",
+						"type": "varchar"
+					},
+					{
+						"name": "Billable Pier",
+						"type": "bit"
+					},
+					{
+						"name": "Vessel Type",
+						"type": "varchar"
+					},
+					{
+						"name": "Vessel Length",
+						"type": "real",
+						"precision": 7
+					},
+					{
+						"name": "Cargo Origin Port Country",
+						"type": "varchar"
+					},
+					{
+						"name": "Cargo Origin Port City",
+						"type": "varchar"
+					},
+					{
+						"name": "Cargo Destination Port Country",
+						"type": "varchar"
+					},
+					{
+						"name": "Cargo Destination Port City",
+						"type": "varchar"
+					},
+					{
+						"name": "Vessel Shipping Line",
+						"type": "varchar"
+					},
+					{
+						"name": "Home Based Vessel",
+						"type": "bit"
+					},
+					{
+						"name": "IMO Number",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Berth Dept",
+						"type": "varchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "VesselSpreadsheet"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/SQLPortVessels')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SQLPortVessels')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "SqlServer",
+				"typeProperties": {
+					"connectionString": "[parameters('SQLPortVessels_connectionString')]",
+					"userName": "[parameters('SQLPortVessels_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('SQLPortVessels_password')]"
+					}
+				},
+				"connectVia": {
+					"referenceName": "Localhostruntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/Localhostruntime')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/StorageAccount')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"connectionString": "[parameters('StorageAccount_connectionString')]"
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/TestAzureLink')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "PowerBIWorkspace",
+				"typeProperties": {
+					"workspaceID": "TestAzureLink",
+					"tenantID": "05d46a83-ee68-4d8c-9a1a-398f317c5af4"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/test-workspace-adybs-WorkspaceDefaultSqlServer')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"parameters": {
+					"DBName": {
+						"type": "String"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlDW",
+				"typeProperties": {
+					"connectionString": "[parameters('test-workspace-adybs-WorkspaceDefaultSqlServer_connectionString')]"
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/test-workspace-adybs-WorkspaceDefaultStorage')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('test-workspace-adybs-WorkspaceDefaultStorage_properties_typeProperties_url')]"
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/testTableStorgeLS')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "AzureTableStorage",
+				"typeProperties": {
+					"connectionString": "[parameters('testTableStorgeLS_connectionString')]"
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/AutoResolveIntegrationRuntime')]",
+			"type": "Microsoft.Synapse/workspaces/integrationRuntimes",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"type": "Managed",
+				"typeProperties": {
+					"computeProperties": {
+						"location": "AutoResolve",
+						"dataFlowProperties": {
+							"computeType": "General",
+							"coreCount": 8,
+							"timeToLive": 0
+						}
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Localhostruntime')]",
+			"type": "Microsoft.Synapse/workspaces/integrationRuntimes",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"type": "SelfHosted",
+				"typeProperties": {}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/WorkspaceSystemIdentity')]",
+			"type": "Microsoft.Synapse/workspaces/credentials",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"type": "ManagedIdentity",
+				"typeProperties": {}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/CLEANUP')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "DROP EXTERNAL DATA SOURCE TestStorage\nDROP DATABASE SCOPED CREDENTIAL hopacredential\n\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "hopadbserverless",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/CreatePortsSpreadsheetView')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "DROP VIEW IF EXISTS vesselsSpreadsheet;\nGO\n\nCREATE VIEW vesselsSpreadsheet AS\nSELECT * FROM OPENROWSET(\n    BULK 'https://datacourseworkspace.blob.core.windows.net/datacoursefilesys/testfile.parquet',\n    FORMAT = 'PARQUET'\n) as ports",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "PortsDBTest",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Storage-External-Container-Connection')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "-- Create Database\nCREATE DATABASE hopadbserverless\n\n-- Create data source\n-- create master key that will protect the credentials:\nCREATE MASTER KEY ENCRYPTION BY PASSWORD = 'sknfd#isfnasdkf!bsk1';\n\n-- create credentials for containers in our demo storage account\nCREATE DATABASE SCOPED CREDENTIAL hopacredential\nWITH IDENTITY='SHARED ACCESS SIGNATURE',  \nSECRET = 'sv=2021-06-08&ss=bfqt&srt=sco&sp=rwdlacupyx&se=2022-09-06T23:40:44Z&st=2022-09-06T15:40:44Z&spr=https&sig=%2BP9XyK3Q5t6FsrWovez20bs1tRTUjzKRqJaE0F1vyDk%3D'\nGO\nCREATE EXTERNAL DATA SOURCE TestStorage WITH (\n    LOCATION = 'https://datacourseworkspace.file.core.windows.net',\n    CREDENTIAL = hopacredential\n);\nGO",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "TestHopaDB",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/compare querying formats')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "select top 40 * from dbo.vesselsSpreadsheet\n/*comment*/\nSELECT top 40 * FROM OPENROWSET(\n    BULK 'https://datacourseworkspace.blob.core.windows.net/datacoursefilesys/testfile.parquet',\n    FORMAT = 'PARQUET'\n) as ports",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "PortsDBTest",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		}
+	]
+}
