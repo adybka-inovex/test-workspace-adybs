@@ -1,0 +1,17 @@
+{
+	"name": "CLEANUP",
+	"properties": {
+		"content": {
+			"query": "DROP EXTERNAL DATA SOURCE TestStorage\nDROP DATABASE SCOPED CREDENTIAL hopacredential\n\n/*comment in sql script*/",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "hopadbserverless",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
