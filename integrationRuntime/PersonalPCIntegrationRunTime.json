@@ -1,0 +1,6 @@
+{
+	"name": "PersonalPCIntegrationRunTime",
+	"properties": {
+		"type": "SelfHosted"
+	}
+}
