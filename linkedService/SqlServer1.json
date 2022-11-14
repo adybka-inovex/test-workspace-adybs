@@ -1,0 +1,17 @@
+{
+	"name": "SqlServer1",
+	"type": "Microsoft.Synapse/workspaces/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "SqlServer",
+		"typeProperties": {
+			"connectionString": "integrated security=True;data source=DESKTOP-O5QVC3L;initial catalog=Volleyball1",
+			"userName": "andrew",
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiJjZWE4M2E5Ny01MGE4LTQ3M2UtYmIzNi01YmYzNWI1ZTZjYTciLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+		},
+		"connectVia": {
+			"referenceName": "PersonalPCIntegrationRunTime",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}
